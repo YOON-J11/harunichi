@@ -443,17 +443,19 @@ public class MemberControllerImpl implements MemberController {
     }
 
     @RequestMapping(value = "/addMemberWriteForm.do", method = RequestMethod.GET)
-    public String addMemberWriteForm(HttpSession session, HttpServletResponse response) throws IOException {
+    public String addMemberWriteForm(HttpSession session, HttpServletResponse response, HttpServletRequest request) throws IOException {
         MemberVo memberVo = (MemberVo) session.getAttribute("memberVo");
         response.setContentType("text/html; charset=UTF-8");
 
         if (memberVo == null || memberVo.getEmail() == null) {
-            response.getWriter().write("<script>alert('비정상적인 접근입니다.'); location.href='/harunichi/member/addMemberForm.do';</script>");
+            response.getWriter().write("<script>alert('비정상적인 접근입니다.'); location.href='" 
+            	    + request.getContextPath() + "/member/addMemberForm.do';</script>");
             return null;
         }
         if (memberService.isEmailDuplicate(memberVo.getEmail())) {
             session.removeAttribute("memberVo");
-            response.getWriter().write("<script>alert('이미 회원으로 등록된 이메일입니다.'); location.href='/harunichi/member/addMemberForm.do';</script>");
+            response.getWriter().write("<script>alert('이미 회원으로 등록된 이메일입니다.'); location.href='" 
+            	    + request.getContextPath() + "/member/addMemberForm.do';</script>");
             return null;
         }
         return "member/addMemberWriteForm";
@@ -729,7 +731,8 @@ public class MemberControllerImpl implements MemberController {
             logger.error("회원정보 수정 오류", e);
             response.setContentType("text/html;charset=UTF-8");
             PrintWriter out = response.getWriter();
-            out.println("<script>alert('회원정보 수정 중 오류가 발생했습니다.'); location.href='/harunichi/';</script>");
+            out.println("<script>alert('회원정보 수정 중 오류가 발생했습니다.'); location.href='" 
+            	    + request.getContextPath() + "/';</script>");
             out.flush();
             return null;
         }
