@@ -37,13 +37,13 @@
 
 .select2-container .select2-selection--single {
 	height: 33px !important;
-    line-height: 33px !important;
-    display: flex !important;
-    align-items: center;
+	line-height: 33px !important; display : flex !important;
+	align-items: center;
 	border: 1px solid #ddd;
 	border-radius: 20px;
 	outline: none;
 	background-color: #fff;
+	display: flex !important;
 }
 
 .select2-container .select2-selection__rendered {
@@ -87,9 +87,9 @@ img.country-icon {
 	<section class="light-header-wrap">
 		<div class="light-header">
 			<div class="header-area">
-				<a href="${contextPath}"><img
-					src="${contextPath}/resources/icon/logo2.svg"></a> <select
-					id="country-select" name="country">
+				<a href="<c:url value='/'/>"> <img
+					src="<c:url value='/resources/icon/logo2.svg'/>" alt="HARUNICHI">
+				</a> <select id="country-select" name="country">
 					<option value="kr"
 						data-image="${contextPath}/resources/icon/south-korea_icon.png"
 						${selectedCountry == 'kr' ? 'selected' : ''}>Korea</option>
