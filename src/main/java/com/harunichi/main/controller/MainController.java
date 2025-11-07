@@ -42,7 +42,7 @@ public class MainController {
 	//메인 페이지를 보여주는 메서드
 	//http://localhost:8090/harunichi 요청시 메인페이지, 또는
 	//http://localhost:8090/harunichi/main 요청시 메인페이지
-	@RequestMapping(value = {"/", "/main"}, method = RequestMethod.GET)
+	@RequestMapping(value = {"", "/", "/main"}, method = RequestMethod.GET)
 	public String showMainPage(Locale locale, Model model, HttpServletRequest request) throws Exception {
 		
 		logger.info("메인페이지입니다.", locale);

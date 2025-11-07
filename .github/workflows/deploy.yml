@@ -39,4 +39,8 @@ jobs:
         app-name: harunichi
         type: war 
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+<<<<<<< HEAD
         package: artifact/ROOT.war
+=======
+        package: artifact/ROOT.war
+>>>>>>> branch 'main' of https://github.com/YOON-J11/harunichi.git
