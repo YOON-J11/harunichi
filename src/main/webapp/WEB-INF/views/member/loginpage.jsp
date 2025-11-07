@@ -116,7 +116,7 @@
 				
 				$.post($(this).attr('action'), $(this).serialize(), function(result) {
 			    	if (result === 'success') {
-			        	location.href = '/harunichi'; // 메인페이지로 이동
+			    		location.href = '${contextPath}/'; // 메인페이지로 이동
 			        } else {
 			        	$('.error_message').show();
 			        }
