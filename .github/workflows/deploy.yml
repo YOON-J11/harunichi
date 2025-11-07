@@ -1,0 +1,42 @@
+name: Deploy Harunichi to Azure
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: Build WAR
+      run: mvn -B -DskipTests clean package
+
+    - name: Prepare ROOT.war
+      run: |
+        mkdir artifact
+        cp target/*.war artifact/ROOT.war
+        ls -al artifact
+
+    - name: Debug publish profile length
+      run: echo "PUB_PROFILE_LEN=${#PUBLISH_PROFILE}"
+      env:
+        PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+
+    - name: Deploy to Azure WebApp
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: harunichi
+        type: war 
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: artifact/ROOT.war
