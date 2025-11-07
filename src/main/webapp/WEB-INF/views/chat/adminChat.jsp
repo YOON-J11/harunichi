@@ -2,6 +2,8 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
@@ -74,13 +76,21 @@
 							<div class="profile-cell">
 								<div class="table-img">
 									<c:choose>
-										<c:when test="${not empty chatRoom.profileImg}">
-											<img id="profileImg_${chatRoom.roomId}" src="${contextPath}/images/chat/${chatRoom.profileImg}" alt="프로필 이미지" />
-										</c:when>
-										<c:otherwise>
-											<img id="profileImg_${chatRoom.roomId}" src="${contextPath}/resources/icon/basic_profile.jpg" alt="기본 프로필" />
-							        	</c:otherwise>
+									  <c:when test="${not empty chatRoom.profileImg}">
+									    <c:choose>
+									      <c:when test="${fn:startsWith(chatRoom.profileImg, 'http')}">
+									        <img id="profileImg_${chatRoom.roomId}" src="${chatRoom.profileImg}" alt="프로필 이미지" />
+									      </c:when>
+									      <c:otherwise>
+									        <img id="profileImg_${chatRoom.roomId}" src="${ctx}/images/chat/${chatRoom.profileImg}" alt="프로필 이미지" />
+									      </c:otherwise>
+									    </c:choose>
+									  </c:when>
+									  <c:otherwise>
+									    <img id="profileImg_${chatRoom.roomId}" src="${ctx}/resources/icon/basic_profile.jpg" alt="기본 프로필" />
+									  </c:otherwise>
 									</c:choose>
+
 								</div>
 								<button type="button" onclick="resetProfileImg('${chatRoom.roomId}')">초기화</button>
 								<input type="hidden" value="${chatRoom.profileImg}" name="imgReset_${loop.index}" id="profileImgInput_${chatRoom.roomId}" />

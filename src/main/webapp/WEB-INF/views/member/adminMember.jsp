@@ -86,16 +86,26 @@
 								<div class="profile-cell">
 									<div class="table-img">
 										<c:choose>
-											<c:when test="${not empty member.profileImg}">
-												<img id="profileImg_${member.id}" src="${contextPath}/images/profile/${member.profileImg}" alt="프로필 이미지" />
-											</c:when>
-											<c:otherwise>
-												<img id="profileImg_${member.id}" src="${contextPath}/resources/icon/basic_profile.jpg" alt="기본 프로필" />
-								        	</c:otherwise>
+										    <c:when test="${not empty member.profileImgUrl}">
+										        <img id="profileImg_${member.id}" src="${member.profileImgUrl}" alt="프로필 이미지" />
+										    </c:when>
+										
+										    <c:when test="${not empty member.profileImg}">
+										        <img id="profileImg_${member.id}" src="${contextPath}/images/profile/${member.profileImg}" alt="프로필 이미지" />
+										    </c:when>
+										
+										    <c:otherwise>
+										        <img id="profileImg_${member.id}" src="${contextPath}/resources/icon/basic_profile.jpg" alt="기본 프로필" />
+										    </c:otherwise>
 										</c:choose>
+
+
 									</div>
 									<button type="button" onclick="resetProfileImg('${member.id}')">초기화</button>
 									<input type="hidden" name="members[${loop.index}].profileImg" value="${member.profileImg}" id="profileImgInput_${member.id}" />
+									<input type="hidden" name="members[${loop.index}].profileImgUrl" value="${member.profileImgUrl}" id="profileImgUrlInput_${member.id}" />
+
+									
 								</div>
 							</td>
 							<td>${member.joindate}</td>
@@ -184,13 +194,16 @@
 		    }
 		}
 		function resetProfileImg(memberId) {
-			const imgTag = document.getElementById("profileImg_" + memberId);
-		    const inputTag = document.getElementById("profileImgInput_" + memberId);
-		
-		    imgTag.src = "${contextPath}/resources/icon/basic_profile.jpg";
-		
-		    inputTag.value = "";
-		}
+			  const imgTag     = document.getElementById("profileImg_" + memberId);
+			  const inputLocal = document.getElementById("profileImgInput_" + memberId);
+			  const inputUrl   = document.getElementById("profileImgUrlInput_" + memberId);
+
+			  if (imgTag) imgTag.src = "${contextPath}/resources/icon/basic_profile.jpg";
+
+			  if (inputLocal) inputLocal.value = "";
+			  if (inputUrl)   inputUrl.value   = "";
+			}
+
 	</script>
 </body>
 </html>

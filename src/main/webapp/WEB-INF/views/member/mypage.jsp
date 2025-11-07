@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -17,14 +18,23 @@
 		</div>
 		<div class="mypage-profile-area">
 			<div class="profile-area-left">
-				<c:choose>
-				    <c:when test="${not empty pageOwner.profileImg}">
-				        <img src="${contextPath}/images/profile/${pageOwner.profileImg}" alt="프로필 이미지">
-				    </c:when>
-				    <c:otherwise>
-				        <img src="${contextPath}/resources/icon/basic_profile.jpg" alt="기본 이미지">
-				    </c:otherwise>
-				</c:choose>
+			<c:choose>
+			    <c:when test="${not empty pageOwner.profileImg}">
+			        <c:choose>
+			            <c:when test="${fn:startsWith(pageOwner.profileImg, 'http')}">
+			                <!-- Azure Blob 절대 URL -->
+			                <img src="${pageOwner.profileImg}" alt="프로필 이미지">
+			            </c:when>
+			            <c:otherwise>
+			                <!-- 예전 로컬 파일명 방식 -->
+			                <img src="${contextPath}/images/profile/${pageOwner.profileImg}" alt="프로필 이미지">
+			            </c:otherwise>
+			        </c:choose>
+			    </c:when>
+			    <c:otherwise>
+			        <img src="${contextPath}/resources/icon/basic_profile.jpg}" alt="기본 이미지">
+			    </c:otherwise>
+			</c:choose>
 			</div>
 			<div class="profile-area-middle">
 				<div class="nick-and-email">

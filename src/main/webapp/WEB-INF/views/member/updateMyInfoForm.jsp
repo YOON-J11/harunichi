@@ -22,11 +22,10 @@
         	<div class="profile-image-area">
 			    <c:choose>
 			        <c:when test="${not empty member.profileImg}">
-			            <img id="profileImage" src="${pageContext.request.contextPath}/images/profile/${sessionScope.member.profileImg}" alt="프로필 이미지">
-			            <!-- [기본이미지] 버튼 : 현재 이미지가 기본 이미지 아닐 때만 표시 -->
-            			<button type="button" id="resetProfileBtn">기본 이미지 적용</button>
-            			<input type="hidden" name="resetProfile" id="resetProfile" value="false"><!-- 이미지를 기본이미지로 설정했을때 데이터보낼 히든인풋 -->
-			        </c:when>
+					  <img id="profileImage" src="${member.profileImg}" alt="프로필 이미지">
+					  <button type="button" id="resetProfileBtn">기본 이미지 적용</button>
+					  <input type="hidden" name="resetProfile" id="resetProfile" value="false">
+					</c:when>
 			        <c:otherwise>
 			            <img id="profileImage" src="${contextPath}/resources/icon/basic_profile.jpg" alt="기본 프로필 이미지">
 			        </c:otherwise>

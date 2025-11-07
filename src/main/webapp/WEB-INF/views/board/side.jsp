@@ -1,14 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 
 <div class="board-side">
 	<div class="search-box">
 		<form action="${contextPath}/board/search" method="get" class="search-form">
-			<input type="text" name="keyword" placeholder="원하는 글을 찾아보세요"
-				value="${keyword}">
+			<input type="text" name="keyword" placeholder="원하는 글을 찾아보세요" value="${fn:escapeXml(keyword)}">
 			<button type="submit">
-				<img src="/harunichi/resources/icon/search_icon.svg" alt="검색">
+				<img src="${contextPath}/resources/icon/search_icon.svg" alt="검색">
 			</button>
 		</form>
 	</div>
@@ -19,8 +19,19 @@
 		<c:forEach var="top" items="${top5List}">
 			<li>
 				<a href="${contextPath}/board/view?boardId=${top.boardId}">
-				<p class="item-cate">${top.boardCate}</p>
-				<div class="item-content">${top.boardCont}</div>
+				<p class="item-cate"><c:out value="${top.boardCate}" /></p>
+				<c:choose>
+				  <c:when test="${fn:length(top.boardCont) > 80}">
+				    <div class="item-content">
+				      <c:out value="${fn:substring(top.boardCont, 0, 80)}" />...
+				    </div>
+				  </c:when>
+				  <c:otherwise>
+				    <div class="item-content">
+				      <c:out value="${top.boardCont}" />
+				    </div>
+				  </c:otherwise>
+				</c:choose>
 				</a>			
 			</li>
 		</c:forEach>

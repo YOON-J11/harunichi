@@ -12,15 +12,28 @@
 				<div class="user-profile">
 					<div class="user-pic">
 						<%-- member 프로필 사진 가져오기 --%>
-						<c:if test="${empty board.boardWriterImg}">
-							<img
-								src="https://ca-fe.pstatic.net/web-mobile/static/default-image/user/profile-80-x-80.svg">
-						</c:if>
-						<c:if test="${not empty board.boardWriterImg}">
-							<img id="profileImage" src="${pageContext.request.contextPath}/images/profile/${board.boardWriterImg}" alt="선택한 프로필 이미지">
-						</c:if>
+						<c:choose>
+							<c:when test="${not empty board.boardWriterImg}">
+								<c:choose>
+									<c:when test="${fn:startsWith(board.boardWriterImg, 'http')}">
+										<img id="profileImage" src="${board.boardWriterImg}"
+											alt="프로필 이미지">
+									</c:when>
+									<c:otherwise>
+										<img id="profileImage"
+											src="<c:url value='/images/profile/${board.boardWriterImg}'/>"
+											alt="프로필 이미지">
+									</c:otherwise>
+								</c:choose>
+							</c:when>
+							<c:otherwise>
+								<img id="profileImage"
+									src="<c:url value='/resources/icon/basic_profile.jpg'/>"
+									alt="기본 프로필">
+							</c:otherwise>
+						</c:choose>
 					</div>
-					<div class="user-name">${board.boardWriter} </div>
+					<div class="user-name">${board.boardWriter}</div>
 					<div class="item-date" data-date="${board.boardDate}"></div>
 				</div>
 				<div class="item-more">
@@ -54,16 +67,28 @@
 					<c:out value="${board.boardCont}" escapeXml="false" />
 				</p>
 				<div class="img-wrap">
-					<c:forEach var="imageFileName" items="${board.imageFiles}">
-						<c:if test="${not empty imageFileName}">
-							<div class="img-thumb">
-								<img
-									src="${contextPath}/resources/images/board/${imageFileName}"
-									alt="게시글 이미지">
-							</div>
-						</c:if>
-					</c:forEach>
+				  <c:forEach var="imageFileName" items="${board.imageFiles}">
+				    <c:if test="${not empty imageFileName}">
+				      <div class="img-thumb">
+				        <c:choose>
+
+				          <c:when test="${fn:startsWith(imageFileName, 'http') or fn:startsWith(imageFileName, 'data:')}">
+				            <img src="${imageFileName}" alt="게시글 이미지">
+				          </c:when>
+				
+				          <c:when test="${fn:startsWith(imageFileName, '/')}">
+				            <img src="${contextPath}${imageFileName}" alt="게시글 이미지">
+				          </c:when>
+				
+				          <c:otherwise>
+				            <img src="${contextPath}/resources/images/board/${imageFileName}" alt="게시글 이미지">
+				          </c:otherwise>
+				        </c:choose>
+				      </div>
+				    </c:if>
+				  </c:forEach>
 				</div>
+
 			</a>
 			<div class="item-info">
 				<div class="like  ${likedPosts[board.boardId] ? 'liked' : ''}"

@@ -38,8 +38,18 @@
 	            	<div class="follow-item-inner">
 		            	<a href="${contextPath}/mypage?id=${follow.id}">
 		            		<div class="follow-item-img">
-		            			<img src="${contextPath}/images/profile/${follow.profileImg != null ? follow.profileImg : 'basic_profile.jpg'}" alt="프로필">
-		            		</div>
+							  <c:choose>
+							    <c:when test="${not empty follow.profileImgUrl}">
+							      <img src="${follow.profileImgUrl}" alt="프로필">
+							    </c:when>
+							    <c:when test="${not empty follow.profileImg}">
+							      <img src="${contextPath}/images/profile/${follow.profileImg}" alt="프로필">
+							    </c:when>
+							    <c:otherwise>
+							      <img src="${contextPath}/resources/icon/basic_profile.jpg}" alt="기본 프로필">
+							    </c:otherwise>
+							  </c:choose>
+							</div>
 		                	<div class="follow-info">
 		                    	<span>${follow.nick}</span>
 		                    	<span>${follow.email}</span>

@@ -3,7 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 
-<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link href="${contextPath}/resources/css/board.css" rel="stylesheet"
 	type="text/css">
 
@@ -23,15 +23,24 @@
 							<div class="user-profile">
 								<div class="user-pic">
 									<%-- member 프로필 사진 가져오기 --%>
-									<c:if test="${empty board.boardWriterImg}">
-										<img
-											src="https://ca-fe.pstatic.net/web-mobile/static/default-image/user/profile-80-x-80.svg">
-									</c:if>
-									<c:if test="${not empty board.boardWriterImg}">
-										<img id="profileImage"
-											src="${pageContext.request.contextPath}/images/profile/${board.boardWriterImg}"
-											alt="선택한 프로필 이미지">
-									</c:if>
+									<c:choose>
+									    <c:when test="${empty board.boardWriterImg}">
+									        <img src="https://ca-fe.pstatic.net/web-mobile/static/default-image/user/profile-80-x-80.svg" alt="기본 프로필">
+									    </c:when>
+									    <c:otherwise>
+									        <c:choose>
+									            <!-- Azure Blob 절대 URL 저장된 경우 -->
+									            <c:when test="${fn:startsWith(board.boardWriterImg, 'http')}">
+									                <img src="${board.boardWriterImg}" alt="프로필 이미지">
+									            </c:when>
+									            <!-- 예전처럼 파일명만 저장된 경우 -->
+									            <c:otherwise>
+									                <img src="${contextPath}/images/profile/${board.boardWriterImg}" alt="프로필 이미지">
+									            </c:otherwise>
+									        </c:choose>
+									    </c:otherwise>
+									</c:choose>
+									
 								</div>
 								<div class="user-name">${board.boardWriter}</div>
 								<div class="item-date" data-date="${board.boardDate}"></div>
@@ -68,15 +77,22 @@
 								<c:out value="${board.boardCont}" escapeXml="false" />
 							</p>
 							<div class="img-wrap">
-								<c:forEach var="imageFileName" items="${board.imageFiles}">
-									<c:if test="${not empty imageFileName}">
-										<div class="img-thumb">
-											<img
-												src="${contextPath}/resources/images/board/${imageFileName}"
-												alt="게시글 이미지">
-										</div>
-									</c:if>
-								</c:forEach>
+							    <c:forEach var="imageFileName" items="${board.imageFiles}">
+							        <c:if test="${not empty imageFileName}">
+							            <div class="img-thumb">
+							                <c:choose>
+							                    <!-- Blob 절대 URL -->
+							                    <c:when test="${fn:startsWith(imageFileName, 'http')}">
+							                        <img src="${imageFileName}" alt="게시글 이미지">
+							                    </c:when>
+							                    <!-- 로컬에 저장된 예전 파일명 -->
+							                    <c:otherwise>
+							                        <img src="${contextPath}/resources/images/board/${imageFileName}" alt="게시글 이미지">
+							                    </c:otherwise>
+							                </c:choose>
+							            </div>
+							        </c:if>
+							    </c:forEach>
 							</div>
 						</a>
 						<div class="item-info">

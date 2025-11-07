@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
@@ -288,38 +289,92 @@ table button:hover {
           <td>${board.boardCount}</td>
           <td>${board.boardLike}</td>
           <td>${board.boardRe}</td>
-          <td>
-            <c:choose>
-              <c:when test="${not empty board.boardImg1}">
-                <img src="${contextPath}/resources/images/board/${board.boardImg1}" alt="이미지1" style="width:50px;"/>
-              </c:when>
-              <c:otherwise>없음</c:otherwise>
-            </c:choose>
-          </td>
-          <td>
-            <c:choose>
-              <c:when test="${not empty board.boardImg2}">
-                <img src="${contextPath}/resources/images/board/${board.boardImg2}" alt="이미지2" style="width:50px;"/>
-              </c:when>
-              <c:otherwise>없음</c:otherwise>
-            </c:choose>
-          </td>
-          <td>
-            <c:choose>
-              <c:when test="${not empty board.boardImg3}">
-                <img src="${contextPath}/resources/images/board/${board.boardImg3}" alt="이미지3" style="width:50px;"/>
-              </c:when>
-              <c:otherwise>없음</c:otherwise>
-            </c:choose>
-          </td>
-          <td>
-            <c:choose>
-              <c:when test="${not empty board.boardImg4}">
-                <img src="${contextPath}/resources/images/board/${board.boardImg4}" alt="이미지4" style="width:50px;"/>
-              </c:when>
-              <c:otherwise>없음</c:otherwise>
-            </c:choose>
-          </td>
+          <!-- 이미지1 -->
+<td>
+  <c:choose>
+    <c:when test="${not empty board.boardImg1}">
+      <c:choose>
+        <!-- 외부(Blob/SAS/절대) URL -->
+        <c:when test="${fn:startsWith(board.boardImg1,'http://') or fn:startsWith(board.boardImg1,'https://')}">
+          <img src="${board.boardImg1}" alt="이미지1"
+               style="width:50px;height:50px;object-fit:cover"
+               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+        </c:when>
+        <!-- 로컬 저장 파일명 -->
+        <c:otherwise>
+          <img src="${contextPath}/resources/images/board/${board.boardImg1}" alt="이미지1"
+               style="width:50px;height:50px;object-fit:cover"
+               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+        </c:otherwise>
+      </c:choose>
+    </c:when>
+    <c:otherwise>없음</c:otherwise>
+  </c:choose>
+</td>
+
+<!-- 이미지2 -->
+<td>
+  <c:choose>
+    <c:when test="${not empty board.boardImg2}">
+      <c:choose>
+        <c:when test="${fn:startsWith(board.boardImg2,'http://') or fn:startsWith(board.boardImg2,'https://')}">
+          <img src="${board.boardImg2}" alt="이미지2"
+               style="width:50px;height:50px;object-fit:cover"
+               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+        </c:when>
+        <c:otherwise>
+          <img src="${contextPath}/resources/images/board/${board.boardImg2}" alt="이미지2"
+               style="width:50px;height:50px;object-fit:cover"
+               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+        </c:otherwise>
+      </c:choose>
+    </c:when>
+    <c:otherwise>없음</c:otherwise>
+  </c:choose>
+</td>
+
+<!-- 이미지3 -->
+<td>
+  <c:choose>
+    <c:when test="${not empty board.boardImg3}">
+      <c:choose>
+        <c:when test="${fn:startsWith(board.boardImg3,'http://') or fn:startsWith(board.boardImg3,'https://')}">
+          <img src="${board.boardImg3}" alt="이미지3"
+               style="width:50px;height:50px;object-fit:cover"
+               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+        </c:when>
+        <c:otherwise>
+          <img src="${contextPath}/resources/images/board/${board.boardImg3}" alt="이미지3"
+               style="width:50px;height:50px;object-fit:cover"
+               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+        </c:otherwise>
+      </c:choose>
+    </c:when>
+    <c:otherwise>없음</c:otherwise>
+  </c:choose>
+</td>
+
+<!-- 이미지4 -->
+<td>
+  <c:choose>
+    <c:when test="${not empty board.boardImg4}">
+      <c:choose>
+        <c:when test="${fn:startsWith(board.boardImg4,'http://') or fn:startsWith(board.boardImg4,'https://')}">
+          <img src="${board.boardImg4}" alt="이미지4"
+               style="width:50px;height:50px;object-fit:cover"
+               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+        </c:when>
+        <c:otherwise>
+          <img src="${contextPath}/resources/images/board/${board.boardImg4}" alt="이미지4"
+               style="width:50px;height:50px;object-fit:cover"
+               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+        </c:otherwise>
+      </c:choose>
+    </c:when>
+    <c:otherwise>없음</c:otherwise>
+  </c:choose>
+</td>
+          
           <td>
             <!-- 수정 페이지로 이동하는 링크 추가 -->
             <a href="${contextPath}/board/admin/editAdmin/${board.boardId}">수정</a>

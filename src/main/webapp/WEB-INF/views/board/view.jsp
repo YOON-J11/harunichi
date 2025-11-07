@@ -1,8 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 
-<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <link href="${contextPath}/resources/css/board.css" rel="stylesheet"
 	type="text/css">
 
@@ -70,15 +72,26 @@
 		</div>
 
 		<div class="post-images">
-			<c:forEach var="imageFileName" items="${board.imageFiles}">
-				<c:if test="${not empty imageFileName}">
-					<div class="post-img-thumb">
-						<img src="${contextPath}/resources/images/board/${imageFileName}"
-							alt="게시글 이미지">
-					</div>
-				</c:if>
-			</c:forEach>
+		  <c:forEach var="imageFileName" items="${board.imageFiles}">
+		    <c:if test="${not empty imageFileName}">
+		      <div class="post-img-thumb">
+		        <c:choose>
+		          <!-- Blob/SAS/외부 URL -->
+		          <c:when test="${fn:startsWith(imageFileName, 'http://') or fn:startsWith(imageFileName, 'https://')}">
+		            <img src="${imageFileName}" alt="게시글 이미지" loading="lazy"
+		                 onerror="this.src='${contextPath}/resources/icon/image_placeholder.png'">
+		          </c:when>
+		          <!-- 기존 로컬 저장 파일 -->
+		          <c:otherwise>
+		            <img src="${contextPath}/resources/images/board/${imageFileName}" alt="게시글 이미지" loading="lazy"
+		                 onerror="this.src='${contextPath}/resources/icon/image_placeholder.png'">
+		          </c:otherwise>
+		        </c:choose>
+		      </div>
+		    </c:if>
+		  </c:forEach>
 		</div>
+
 		<div class="post-meta">
 			<p class="item-date" data-date="${board.boardDate}"></p>
 			<p>·</p>

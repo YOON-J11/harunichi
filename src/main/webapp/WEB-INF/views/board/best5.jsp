@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -22,11 +23,16 @@
 						</div>
 						<div class="img-wrap">				
 							<c:if test="${not empty top100.boardImg1}">
-								<div class="img-thumb">
-									<img
-										src="${contextPath}/resources/images/board/${top100.boardImg1}"
-										alt="게시글 이미지">
-								</div>
+							    <div class="img-thumb">
+							        <c:choose>
+							            <c:when test="${fn:startsWith(top100.boardImg1, 'http://') or fn:startsWith(top100.boardImg1, 'https://')}">
+							                <img src="${top100.boardImg1}" alt="게시글 이미지">
+							            </c:when>
+							            <c:otherwise>
+							                <img src="${contextPath}/resources/images/board/${top100.boardImg1}" alt="게시글 이미지">
+							            </c:otherwise>
+							        </c:choose>
+							    </div>
 							</c:if>
 						</div>
 					</div>	

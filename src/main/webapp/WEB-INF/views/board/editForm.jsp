@@ -1,8 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
-<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <link href="${contextPath}/resources/css/board.css" rel="stylesheet"
 	type="text/css">
 
@@ -77,16 +78,13 @@
 							<option value="" disabled>--카테고리 선택--</option>
 							<option value="생활정보"
 								<c:if test="${board.boardCate eq '생활정보'}">selected</c:if>>생활정보</option>
-							<option value="맛집,카페"
-								<c:if test="${board.boardCate eq '맛집,카페'}">selected</c:if>>맛집,카페</option>
+							<option value="맛집, 카페"  <c:if test="${board.boardCate eq '맛집, 카페'}">selected</c:if>>맛집, 카페</option>
 							<option value="일상"
 								<c:if test="${board.boardCate eq '일상'}">selected</c:if>>일상</option>
 							<option value="찾습니다"
 								<c:if test="${board.boardCate eq '찾습니다'}">selected</c:if>>찾습니다</option>
-							<option value="건강,운동"
-								<c:if test="${board.boardCate eq '건강,운동'}">selected</c:if>>건강,운동</option>
-							<option value="육아,교육"
-								<c:if test="${board.boardCate eq '육아,교육'}">selected</c:if>>육아,교육</option>
+							<option value="건강, 운동"  <c:if test="${board.boardCate eq '건강, 운동'}">selected</c:if>>건강, 운동</option>
+							<option value="육아, 교육"  <c:if test="${board.boardCate eq '육아, 교육'}">selected</c:if>>육아, 교육</option>
 							<%--TODO: 카테고리가 DB에서 관리된다면, 게시글 등록 폼처럼
 	                    <c:forEach var="category" items="${categoryList}">
 	                        <option value="${category.categoryId}" <c:if test="${board.boardCate eq category.categoryId}">selected</c:if>>${category.categoryName}</option>
@@ -97,8 +95,7 @@
 				</div>			
 				<div class="form-row content-wrap">	
 					<div class="form-value">
-						<textarea name="boardCont" rows="10" cols="80" required><c:out
-								value="${board.boardCont}" /></textarea>
+						<textarea name="boardCont" rows="10" cols="80" required"><c:out value="${board.boardCont}"/></textarea>
 					</div>				
 					<div class="form-value image-upload-section">
 						<%-- 기존 이미지 목록 및 삭제 체크박스 --%>
@@ -256,43 +253,73 @@ $(document).ready(function() {
 
 // 기존 이미지 미리보기 표시 함수
 function showExistingThumbnails() {
-    const preview = $('#previewArea');
-    preview.empty();
+  const preview = $('#previewArea');
+  preview.empty();
 
-    const existingImages = [];
+  const existingImages = [];
 
-    <c:if test="${not empty board.boardImg1}">
-        existingImages.push({src: '${contextPath}/resources/images/board/${board.boardImg1}', index: 1});
-    </c:if>
-    <c:if test="${not empty board.boardImg2}">
-        existingImages.push({src: '${contextPath}/resources/images/board/${board.boardImg2}', index: 2});
-    </c:if>
-    <c:if test="${not empty board.boardImg3}">
-        existingImages.push({src: '${contextPath}/resources/images/board/${board.boardImg3}', index: 3});
-    </c:if>
-    <c:if test="${not empty board.boardImg4}">
-        existingImages.push({src: '${contextPath}/resources/images/board/${board.boardImg4}', index: 4});
-    </c:if>
+  <%-- boardImg1 --%>
+  <c:if test="${not empty board.boardImg1}">
+    <c:choose>
+      <c:when test="${fn:startsWith(board.boardImg1,'http://') or fn:startsWith(board.boardImg1,'https://')}">
+        existingImages.push({ src: '${board.boardImg1}', index: 1 });
+      </c:when>
+      <c:otherwise>
+        existingImages.push({ src: '${contextPath}/resources/images/board/${board.boardImg1}', index: 1 });
+      </c:otherwise>
+    </c:choose>
+  </c:if>
 
-    for (const img of existingImages) {
-        const container = $('<div class="img-thum">').css({ display: 'inline-block', marginRight: '10px' });
-        const imageTag = $('<img>').attr('src', img.src).css({
-            width: '100px',
-            height: '100px',
-            objectFit: 'cover',
-            border: '1px solid #ddd',
-            padding: '2px',
-            display: 'block'
-        });
-        const label = $('<label>').text('삭제').prepend(
-            $('<input>').attr({
-                type: 'checkbox',
-                name: 'deleteIndices',
-                value: img.index
-            })
-        );
-        container.append(imageTag).append(label);
-        preview.append(container);
-    }
+  <%-- boardImg2 --%>
+  <c:if test="${not empty board.boardImg2}">
+    <c:choose>
+      <c:when test="${fn:startsWith(board.boardImg2,'http://') or fn:startsWith(board.boardImg2,'https://')}">
+        existingImages.push({ src: '${board.boardImg2}', index: 2 });
+      </c:when>
+      <c:otherwise>
+        existingImages.push({ src: '${contextPath}/resources/images/board/${board.boardImg2}', index: 2 });
+      </c:otherwise>
+    </c:choose>
+  </c:if>
+
+  <%-- boardImg3 --%>
+  <c:if test="${not empty board.boardImg3}">
+    <c:choose>
+      <c:when test="${fn:startsWith(board.boardImg3,'http://') or fn:startsWith(board.boardImg3,'https://')}">
+        existingImages.push({ src: '${board.boardImg3}', index: 3 });
+      </c:when>
+      <c:otherwise>
+        existingImages.push({ src: '${contextPath}/resources/images/board/${board.boardImg3}', index: 3 });
+      </c:otherwise>
+    </c:choose>
+  </c:if>
+
+  <%-- boardImg4 --%>
+  <c:if test="${not empty board.boardImg4}">
+    <c:choose>
+      <c:when test="${fn:startsWith(board.boardImg4,'http://') or fn:startsWith(board.boardImg4,'https://')}">
+        existingImages.push({ src: '${board.boardImg4}', index: 4 });
+      </c:when>
+      <c:otherwise>
+        existingImages.push({ src: '${contextPath}/resources/images/board/${board.boardImg4}', index: 4 });
+      </c:otherwise>
+    </c:choose>
+  </c:if>
+
+  for (const img of existingImages) {
+    const container = $('<div class="img-thum">').css({ display: 'inline-block', marginRight: '10px' });
+
+    const imageTag = $('<img>')
+      .attr('src', img.src)
+      .css({ width:'100px', height:'100px', objectFit:'cover', border:'1px solid #ddd', padding:'2px', display:'block' })
+      .on('error', function(){ this.src='${contextPath}/resources/icon/image_placeholder.png'; });
+
+    const label = $('<label>').text('삭제').prepend(
+      $('<input>').attr({ type: 'checkbox', name: 'deleteIndices', value: img.index })
+    );
+
+    container.append(imageTag).append(label);
+    preview.append(container);
+  }
 }
 </script>

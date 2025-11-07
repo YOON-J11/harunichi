@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
@@ -23,8 +24,18 @@
                     <img id="profileImage" src="${contextPath}/resources/icon/basic_profile.jpg" alt="기본 프로필 이미지">
                 </c:if>
                 <c:if test="${not empty profileImgPath}">
-                    <img id="profileImage" src="${profileImgPath}" alt="선택한 프로필 이미지">
-                </c:if>
+				    <img id="profileImage" 
+				         src="<c:choose>
+				                <c:when test='${fn:startsWith(profileImgPath, "http")}'>
+				                    ${profileImgPath}
+				                </c:when>
+				                <c:otherwise>
+				                    ${contextPath}/images/profile/${profileImgPath}
+				                </c:otherwise>
+				              </c:choose>" 
+				         alt="선택한 프로필 이미지">
+				</c:if>
+
                 <div class="profile-img-upload">
                     <label for="profileImg" class="custom-file-label">프로필 이미지 선택</label>
                     <input type="file" id="profileImg" name="profileImg" accept="image/*" onchange="previewImage(this)"><!-- 이미지 파일만 첨부할수있게 설정 -->

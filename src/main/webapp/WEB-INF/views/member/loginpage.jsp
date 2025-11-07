@@ -43,9 +43,9 @@
 	        </div>
     	</form>
 	</section>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script><!-- 제이쿼리 -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script><!-- 제이쿼리 -->
 	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script><!-- 셀렉트 라이브러리 -->
-	<script src="https://developers.kakao.com/sdk/js/kakao.js"></script><!-- 카카오 SDK -->
+	<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script><!-- 카카오 SDK -->
 	<script>
 		//국가선택 로직
 		$(document).ready(function() {
