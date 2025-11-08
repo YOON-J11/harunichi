@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
@@ -83,31 +84,37 @@
 							<td><input type="text" name="members[${loop.index}].address" value="${member.address}" /></td>
 							<td><input type="text" name="members[${loop.index}].myLike" value="${member.myLike}" /></td>
 							<td>
-								<div class="profile-cell">
-									<div class="table-img">
-										<c:choose>
-										    <c:when test="${not empty member.profileImgUrl}">
-										        <img id="profileImg_${member.id}" src="${member.profileImgUrl}" alt="프로필 이미지" />
-										    </c:when>
-										
-										    <c:when test="${not empty member.profileImg}">
-										        <img id="profileImg_${member.id}" src="${contextPath}/images/profile/${member.profileImg}" alt="프로필 이미지" />
-										    </c:when>
-										
-										    <c:otherwise>
-										        <img id="profileImg_${member.id}" src="${contextPath}/resources/icon/basic_profile.jpg" alt="기본 프로필" />
-										    </c:otherwise>
-										</c:choose>
-
-
-									</div>
-									<button type="button" onclick="resetProfileImg('${member.id}')">초기화</button>
-									<input type="hidden" name="members[${loop.index}].profileImg" value="${member.profileImg}" id="profileImgInput_${member.id}" />
-									<input type="hidden" name="members[${loop.index}].profileImgUrl" value="${member.profileImgUrl}" id="profileImgUrlInput_${member.id}" />
-
-									
-								</div>
+							  <div class="profile-cell">
+							    <div class="table-img">
+							      <c:choose>
+							        <c:when test="${not empty member.profileImg 
+							                       and (fn:startsWith(member.profileImg,'http://') 
+							                            or fn:startsWith(member.profileImg,'https://'))}">
+							          <img id="profileImg_${member.id}" src="${member.profileImg}" alt="프로필 이미지"
+							               style="width:50px;height:50px;object-fit:cover;border-radius:4px;border:1px solid #eee"
+							               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/basic_profile.jpg'"/>
+							        </c:when>
+							
+							        <c:when test="${not empty member.profileImg}">
+							          <img id="profileImg_${member.id}" src="${contextPath}/resources/images/profile/${member.profileImg}" alt="프로필 이미지"
+							               style="width:50px;height:50px;object-fit:cover;border-radius:4px;border:1px solid #eee"
+							               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/basic_profile.jpg'"/>
+							        </c:when>
+							
+							        <c:otherwise>
+							          <img id="profileImg_${member.id}" src="${contextPath}/resources/icon/basic_profile.jpg" alt="기본 프로필"
+							               style="width:50px;height:50px;object-fit:cover;border-radius:4px;border:1px solid #eee"/>
+							        </c:otherwise>
+							      </c:choose>
+							    </div>
+							
+							    <button type="button" onclick="resetProfileImg('${member.id}')">초기화</button>
+							
+							    <input type="hidden" name="members[${loop.index}].profileImg"
+							           value="${member.profileImg}" id="profileImgInput_${member.id}" />
+							  </div>
 							</td>
+
 							<td>${member.joindate}</td>
 							<td>${member.kakao_id}</td>
 							<td>${member.naver_id}</td>
