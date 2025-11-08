@@ -11,7 +11,9 @@
 
 <section class="header-inner">
 
-    <a href="${contextPath}" class="header-logo"><img src="${contextPath}/resources/icon/logo2.svg"></a>
+    <a href="${pageContext.request.contextPath}/" class="header-logo">
+	    <img src="${pageContext.request.contextPath}/resources/icon/logo2.svg">
+	</a>
     
     <div class="header-main-content">
     	<div> </div>

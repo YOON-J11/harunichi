@@ -64,7 +64,7 @@
 		</nav>
 	</div>
 	<div class="back-home">
-		<a href="${contextPath}">홈페이지로 돌아가기</a>
+		<a href="${pageContext.request.contextPath}">홈페이지로 돌아가기</a>
 	</div>
 </section>
 
