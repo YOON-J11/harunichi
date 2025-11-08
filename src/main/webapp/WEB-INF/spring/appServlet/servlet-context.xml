@@ -25,56 +25,80 @@
 		<beans:property name="suffix" value=".jsp" />
 		<beans:property name="order" value="2" />
 	</beans:bean>
-	
-	<context:component-scan base-package="com.harunichi" />
-	
+
+	<context:component-scan
+		base-package="com.harunichi" />
+
+	<beans:bean id="visitInterceptor"
+		class="com.harunichi.common.interceptor.VisitInterceptor" />
 	<!-- 인터셉터 설정 -->
-	<mvc:interceptors> 	
+	<mvc:interceptors>
+		<!-- 방문자 기록: 모든 요청에 대해 1일 1회 기록 (관리자/정적 리소스 제외) -->
 		<mvc:interceptor>
-			<!-- *.do로 끝나는 2단계와 3단계 요청 주소에 대해 인터셉터를 설정-->	
-	 		<mvc:mapping path="/*/*.do"/>  
-			<mvc:mapping path="/*/*/*.do"/>  
-			<beans:bean class="com.harunichi.common.interceptor.ViewNameInterceptor" />
-  		</mvc:interceptor>
-  		
-  		<!-- ✅ 새 인터셉터 추가: 모든 요청에 selectedCountry 주입 -->
-		<mvc:interceptor>
-			<mvc:mapping path="/**"/>
-			<beans:bean class="com.harunichi.translate.TranslationInterceptor"/>
+			<mvc:mapping path="/**" />
+			<!-- 관리자 페이지는 제외 -->
+			<mvc:exclude-mapping path="/admin/**" />
+			<!-- 정적리소스 제외 (이미지/CSS/JS 등) -->
+			<mvc:exclude-mapping path="/resources/**" />
+			<mvc:exclude-mapping path="/images/**" />
+			<beans:ref bean="visitInterceptor"/>
 		</mvc:interceptor>
+
+		<!-- (기존) ViewNameInterceptor: *.do 주소 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/*/*.do" />
+			<mvc:mapping path="/*/*/*.do" />
+			<beans:bean
+				class="com.harunichi.common.interceptor.ViewNameInterceptor" />
+		</mvc:interceptor>
+
+		<!-- (기존) TranslationInterceptor: 모든 요청 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<beans:bean
+				class="com.harunichi.translate.TranslationInterceptor" />
+		</mvc:interceptor>
+
 	</mvc:interceptors>
-	
- 	<!-- 파일업로드 기능을 위한 멀티파트 뷰리졸버 설정 -->
-    <beans:bean id="multipartResolver"  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-       <beans:property name="maxUploadSize" value="52428800" />
-       <beans:property name="maxInMemorySize" value="52428800" />
-       <beans:property name="defaultEncoding" value="utf-8" />
-    </beans:bean>	
-    
-    <!-- Spring MVC의 Tiles framework를 구성 -->
-	<beans:bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
+
+	<!-- 파일업로드 기능을 위한 멀티파트 뷰리졸버 설정 -->
+	<beans:bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="maxUploadSize" value="52428800" />
+		<beans:property name="maxInMemorySize" value="52428800" />
+		<beans:property name="defaultEncoding" value="utf-8" />
+	</beans:bean>
+
+	<!-- Spring MVC의 Tiles framework를 구성 -->
+	<beans:bean id="tilesConfigurer"
+		class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
 		<beans:property name="definitions">
 			<beans:list>
 				<beans:value>classpath:tiles/*.xml</beans:value>
 			</beans:list>
 		</beans:property>
-		<beans:property name="preparerFactoryClass" 
-		               value="org.springframework.web.servlet.view.tiles2.SpringBeanPreparerFactory"/>
+		<beans:property name="preparerFactoryClass"
+			value="org.springframework.web.servlet.view.tiles2.SpringBeanPreparerFactory" />
 	</beans:bean>
-	
-	<!-- 스프링 MVC의 UrlBasedViewResolver 클래스를 사용하여 TilesView 클래스를 뷰 리졸버로 설정-->
-	<beans:bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"> 
-		<beans:property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/>
-		<beans:property name="order" value="1"/>
+
+	<!-- 스프링 MVC의 UrlBasedViewResolver 클래스를 사용하여 TilesView 클래스를 뷰 리졸버로 설정 -->
+	<beans:bean id="viewResolver"
+		class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<beans:property name="viewClass"
+			value="org.springframework.web.servlet.view.tiles2.TilesView" />
+		<beans:property name="order" value="1" />
 	</beans:bean>
-	
+
 	<!-- 프로필이미지 경로 읽어오기 -->
-	<mvc:resources mapping="/images/profile/**" location="file:/C:/harunichi/images/profile/" />
+	<mvc:resources mapping="/images/profile/**"
+		location="file:/C:/harunichi/images/profile/" />
 	<!-- 상품 이미지 경로 읽어오기 -->
-	<mvc:resources mapping="/images/product/**" location="file:/C:/harunichi/images/product/" />
-	
+	<mvc:resources mapping="/images/product/**"
+		location="file:/C:/harunichi/images/product/" />
+
 	<!-- 채팅방 프로필 이미지 경로 읽어오기 -->
-	<mvc:resources mapping="/images/chat/**" location="file:/C:/harunichi/images/chat/" />
+	<mvc:resources mapping="/images/chat/**"
+		location="file:/C:/harunichi/images/chat/" />
 
 
 </beans:beans>

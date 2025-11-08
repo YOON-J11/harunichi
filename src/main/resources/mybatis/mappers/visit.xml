@@ -5,31 +5,34 @@
 
 <mapper namespace="mapper.visit">
 
-	<!-- 방문자 insert -->
-	<insert id="insertVisit" parameterType="String">
-		INSERT INTO visit (ip) VALUES (#{ip})
-	</insert>
+  <insert id="insertVisit" parameterType="string">
+    INSERT INTO visit (ip) VALUES (#{ip})
+  </insert>
 
-	<!-- 오늘 방문자 수 -->
-	<select id="selectTodayVisitCount" resultType="int">
-		SELECT COUNT(*)
-		FROM visit
-		WHERE DATE(visit_time) = CURDATE()
+  <select id="selectTodayVisitCount" resultType="int">
+    SELECT COUNT(*)
+    FROM visit
+    WHERE DATE(CONVERT_TZ(visit_time, '+00:00', '+09:00'))
+          = DATE(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '+09:00'))
+  </select>
+
+  <select id="selectTotalVisitCount" resultType="int">
+    SELECT COUNT(*) FROM visit
+  </select>
+
+	<select id="selectVisitTrend7Days" resultType="com.harunichi.visit.vo.VisitVo">
+	  SELECT
+	    x.dt AS `date`,
+	    COUNT(*) AS cnt
+	  FROM (
+	    SELECT DATE(CONVERT_TZ(visit_time, '+00:00', '+09:00')) AS dt
+	    FROM visit
+	    WHERE CONVERT_TZ(visit_time, '+00:00', '+09:00')
+	          >= DATE_SUB(DATE(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '+09:00')), INTERVAL 6 DAY)
+	  ) x
+	  GROUP BY x.dt
+	  ORDER BY x.dt
 	</select>
 
-	<!-- 전체 누적 방문자 수 -->
-	<select id="selectTotalVisitCount" resultType="int">
-		SELECT COUNT(*)
-		FROM visit
-	</select>
-
-	<!-- 최근 7일 방문자 수 추이 -->
-	<select id="selectVisitTrend7Days" resultType="visitVo">
-		SELECT DATE(visit_time) AS date, COUNT(*) AS cnt
-		FROM visit
-		WHERE visit_time >= CURDATE() - INTERVAL 6 DAY
-		GROUP BY DATE(visit_time)
-		ORDER BY date
-	</select>
 
 </mapper>
