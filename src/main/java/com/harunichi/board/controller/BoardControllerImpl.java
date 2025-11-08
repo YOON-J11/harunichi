@@ -579,23 +579,19 @@ public class BoardControllerImpl implements BoardController {
     
     /** 관리자 - 선택 삭제/저장 (현재 삭제만 사용) */
     @Override
-    @RequestMapping(value = "/admin/saveOrDelete", method = RequestMethod.POST)
-    public String deleteInAdmin(
-            @RequestParam("action") String action,
-            @RequestParam(value = "selectedIds", required = false) List<Integer> selectedIds,
-            @ModelAttribute("boards") List<BoardVo> boards,
-            HttpServletRequest request) {
+    public String deleteInAdmin(String action,
+                                List<Integer> selectedIds,
+                                List<BoardVo> boards,
+                                HttpServletRequest request) {
 
-        if ("delete".equals(action) && selectedIds != null && !selectedIds.isEmpty()) {
+        boolean isDelete = (action == null) || "delete".equalsIgnoreCase(action);
+
+        if (isDelete && selectedIds != null && !selectedIds.isEmpty()) {
             for (Integer boardId : selectedIds) {
                 try {
-                    // 1) 삭제 전 이미지 정리 필요하면 원본 조회
                     BoardVo target = boardService.getBoardByIdWithoutIncrement(boardId);
-
-                    // 2) DB 삭제 (프로젝트에 이미 있는 메서드 사용)
                     boardService.deleteBoardFromAdmin(boardId);
 
-                    // 3) Blob 이미지가 절대 URL/오브젝트 경로로 저장되어 있다면 정리
                     if (target != null) {
                         deleteBlobIfExists(target.getBoardImg1());
                         deleteBlobIfExists(target.getBoardImg2());
@@ -609,6 +605,17 @@ public class BoardControllerImpl implements BoardController {
         }
         return "redirect:/board/admin";
     }
+
+    @RequestMapping(value = "/admin/saveOrDelete", method = RequestMethod.POST)
+    public String deleteInAdminMapped(
+            @RequestParam(value = "action", required = false) String action,
+            @RequestParam(value = "selectedIds", required = false) List<Integer> selectedIds,
+            HttpServletRequest request) {
+
+        return deleteInAdmin(action, selectedIds, null, request);
+    }
+
+
 
 
     /** 관리자 - 수정 폼 */

@@ -236,20 +236,19 @@ table button:hover {
 </head>
 <body>
 
-<!-- 검색 폼 -->
-<form action="${contextPath}/board/admin" method="get" class="header-search-form">    
-     <select name="searchType" id="searchType">
-         <option value="all" ${searchType == 'all' ? 'selected' : ''}>전체</option>
-         <option value="writer" ${searchType == 'writer' ? 'selected' : ''}>작성자</option>
-         <option value="content" ${searchType == 'content' ? 'selected' : ''}>내용</option>
-         <option value="category" ${searchType == 'category' ? 'selected' : ''}>카테고리</option>
-     </select>  
-     <input type="text" name="keyword" id="keyword" value="${keyword}" placeholder="검색어를 입력하세요">
-    <button type="submit">검색</button>
+<!-- 검색 -->
+<form action="${contextPath}/board/admin" method="get" class="header-search-form">
+  <select name="searchType" id="searchType">
+    <option value="all"     ${searchType eq 'all' ? 'selected' : ''}>전체</option>
+    <option value="writer"  ${searchType eq 'writer' ? 'selected' : ''}>작성자</option>
+    <option value="content" ${searchType eq 'content' ? 'selected' : ''}>내용</option>
+    <option value="category"${searchType eq 'category' ? 'selected' : ''}>카테고리</option>
+  </select>
+  <input type="text" name="keyword" id="keyword" value="${keyword}" placeholder="검색어를 입력하세요">
+  <button type="submit">검색</button>
 </form>
 
-
-<!-- 게시글 목록 테이블 -->
+<!-- 목록/삭제 -->
 <form action="${contextPath}/board/admin/saveOrDelete" method="post">
   <table border="0" cellspacing="0" cellpadding="5" width="100%">
     <thead>
@@ -267,163 +266,146 @@ table button:hover {
         <th>이미지2</th>
         <th>이미지3</th>
         <th>이미지4</th>
-        <th>관리</th> <!-- 새로운 컬럼 추가 -->
+        <th>관리</th>
       </tr>
     </thead>
     <tbody>
       <c:forEach var="board" items="${boardList}" varStatus="loop">
         <tr>
           <td><input type="checkbox" name="selectedIds" value="${board.boardId}"/></td>
-          <td>${board.boardId}<input type="hidden" name="boards[${loop.index}].boardId" value="${board.boardId}"/></td>
+          <td>
+            ${board.boardId}
+            <input type="hidden" name="boards[${loop.index}].boardId" value="${board.boardId}"/>
+          </td>
           <td><input type="text" name="boards[${loop.index}].boardWriter" value="${board.boardWriter}" readonly/></td>
           <td><input type="text" name="boards[${loop.index}].boardCont" value="${board.boardCont}" readonly/></td>
-          <td>
-          <input type="text" name="boards[${loop.index}].boardCont" value="${board.boardCate}" readonly/>
-            <!-- ><select name="boards[${loop.index}].boardCate">
-              <option value="일상" ${board.boardCate=='일상'?'selected':''}>일상</option>
-              <option value="생활정보" ${board.boardCate=='생활정보'?'selected':''}>생활정보</option>  
-              <option value="건강, 운동" ${board.boardCate=='건강, 운동'?'selected':''}>건강, 운동</option>                
-            </select>   -->
-          </td>
+          <td><input type="text" name="boards[${loop.index}].boardCate" value="${board.boardCate}" readonly/></td>
           <td><fmt:formatDate value="${board.boardDate}" pattern="yyyy-MM-dd HH:mm"/></td>
           <td>${board.boardCount}</td>
           <td>${board.boardLike}</td>
           <td>${board.boardRe}</td>
+
           <!-- 이미지1 -->
-<td>
-  <c:choose>
-    <c:when test="${not empty board.boardImg1}">
-      <c:choose>
-        <!-- 외부(Blob/SAS/절대) URL -->
-        <c:when test="${fn:startsWith(board.boardImg1,'http://') or fn:startsWith(board.boardImg1,'https://')}">
-          <img src="${board.boardImg1}" alt="이미지1"
-               style="width:50px;height:50px;object-fit:cover"
-               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
-        </c:when>
-        <!-- 로컬 저장 파일명 -->
-        <c:otherwise>
-          <img src="${contextPath}/resources/images/board/${board.boardImg1}" alt="이미지1"
-               style="width:50px;height:50px;object-fit:cover"
-               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
-        </c:otherwise>
-      </c:choose>
-    </c:when>
-    <c:otherwise>없음</c:otherwise>
-  </c:choose>
-</td>
-
-<!-- 이미지2 -->
-<td>
-  <c:choose>
-    <c:when test="${not empty board.boardImg2}">
-      <c:choose>
-        <c:when test="${fn:startsWith(board.boardImg2,'http://') or fn:startsWith(board.boardImg2,'https://')}">
-          <img src="${board.boardImg2}" alt="이미지2"
-               style="width:50px;height:50px;object-fit:cover"
-               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
-        </c:when>
-        <c:otherwise>
-          <img src="${contextPath}/resources/images/board/${board.boardImg2}" alt="이미지2"
-               style="width:50px;height:50px;object-fit:cover"
-               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
-        </c:otherwise>
-      </c:choose>
-    </c:when>
-    <c:otherwise>없음</c:otherwise>
-  </c:choose>
-</td>
-
-<!-- 이미지3 -->
-<td>
-  <c:choose>
-    <c:when test="${not empty board.boardImg3}">
-      <c:choose>
-        <c:when test="${fn:startsWith(board.boardImg3,'http://') or fn:startsWith(board.boardImg3,'https://')}">
-          <img src="${board.boardImg3}" alt="이미지3"
-               style="width:50px;height:50px;object-fit:cover"
-               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
-        </c:when>
-        <c:otherwise>
-          <img src="${contextPath}/resources/images/board/${board.boardImg3}" alt="이미지3"
-               style="width:50px;height:50px;object-fit:cover"
-               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
-        </c:otherwise>
-      </c:choose>
-    </c:when>
-    <c:otherwise>없음</c:otherwise>
-  </c:choose>
-</td>
-
-<!-- 이미지4 -->
-<td>
-  <c:choose>
-    <c:when test="${not empty board.boardImg4}">
-      <c:choose>
-        <c:when test="${fn:startsWith(board.boardImg4,'http://') or fn:startsWith(board.boardImg4,'https://')}">
-          <img src="${board.boardImg4}" alt="이미지4"
-               style="width:50px;height:50px;object-fit:cover"
-               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
-        </c:when>
-        <c:otherwise>
-          <img src="${contextPath}/resources/images/board/${board.boardImg4}" alt="이미지4"
-               style="width:50px;height:50px;object-fit:cover"
-               onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
-        </c:otherwise>
-      </c:choose>
-    </c:when>
-    <c:otherwise>없음</c:otherwise>
-  </c:choose>
-</td>
-          
           <td>
-            <!-- 수정 페이지로 이동하는 링크 추가 -->
-            <a href="${contextPath}/board/admin/editAdmin/${board.boardId}">수정</a>
+            <c:choose>
+              <c:when test="${not empty board.boardImg1}">
+                <c:choose>
+                  <c:when test="${fn:startsWith(board.boardImg1,'http://') or fn:startsWith(board.boardImg1,'https://')}">
+                    <img src="${board.boardImg1}" alt="이미지1" style="width:50px;height:50px;object-fit:cover"
+                         onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+                  </c:when>
+                  <c:otherwise>
+                    <img src="${contextPath}/resources/images/board/${board.boardImg1}" alt="이미지1" style="width:50px;height:50px;object-fit:cover"
+                         onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+                  </c:otherwise>
+                </c:choose>
+              </c:when>
+              <c:otherwise>없음</c:otherwise>
+            </c:choose>
           </td>
+
+          <!-- 이미지2 -->
+          <td>
+            <c:choose>
+              <c:when test="${not empty board.boardImg2}">
+                <c:choose>
+                  <c:when test="${fn:startsWith(board.boardImg2,'http://') or fn:startsWith(board.boardImg2,'https://')}">
+                    <img src="${board.boardImg2}" alt="이미지2" style="width:50px;height:50px;object-fit:cover"
+                         onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+                  </c:when>
+                  <c:otherwise>
+                    <img src="${contextPath}/resources/images/board/${board.boardImg2}" alt="이미지2" style="width:50px;height:50px;object-fit:cover"
+                         onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+                  </c:otherwise>
+                </c:choose>
+              </c:when>
+              <c:otherwise>없음</c:otherwise>
+            </c:choose>
+          </td>
+
+          <!-- 이미지3 -->
+          <td>
+            <c:choose>
+              <c:when test="${not empty board.boardImg3}">
+                <c:choose>
+                  <c:when test="${fn:startsWith(board.boardImg3,'http://') or fn:startsWith(board.boardImg3,'https://')}">
+                    <img src="${board.boardImg3}" alt="이미지3" style="width:50px;height:50px;object-fit:cover"
+                         onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+                  </c:when>
+                  <c:otherwise>
+                    <img src="${contextPath}/resources/images/board/${board.boardImg3}" alt="이미지3" style="width:50px;height:50px;object-fit:cover"
+                         onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+                  </c:otherwise>
+                </c:choose>
+              </c:when>
+              <c:otherwise>없음</c:otherwise>
+            </c:choose>
+          </td>
+
+          <!-- 이미지4 -->
+          <td>
+            <c:choose>
+              <c:when test="${not empty board.boardImg4}">
+                <c:choose>
+                  <c:when test="${fn:startsWith(board.boardImg4,'http://') or fn:startsWith(board.boardImg4,'https://')}">
+                    <img src="${board.boardImg4}" alt="이미지4" style="width:50px;height:50px;object-fit:cover"
+                         onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+                  </c:when>
+                  <c:otherwise>
+                    <img src="${contextPath}/resources/images/board/${board.boardImg4}" alt="이미지4" style="width:50px;height:50px;object-fit:cover"
+                         onerror="this.onerror=null;this.src='${contextPath}/resources/icon/image_placeholder.png'"/>
+                  </c:otherwise>
+                </c:choose>
+              </c:when>
+              <c:otherwise>없음</c:otherwise>
+            </c:choose>
+          </td>
+
+          <td><a href="${contextPath}/board/admin/editAdmin/${board.boardId}">수정</a></td>
         </tr>
       </c:forEach>
-      <c:if test="${empty boardList}"> <!-- result.list 대신 boardList 사용 -->
-        <tr>
-          <td colspan="14">검색결과가 없습니다.</td> <!-- 컬럼 수에 맞게 colspan 조정 -->
-        </tr>
+
+      <c:if test="${empty boardList}">
+        <tr><td colspan="14">검색결과가 없습니다.</td></tr>
       </c:if>
     </tbody>
   </table>
-  <div class="submit-btn-class">
-    <!-- '저장' 버튼은 이제 개별 수정 페이지에서 사용되므로 여기서는 삭제하거나, 일괄 수정 기능으로 변경할 수 있습니다. -->
-    <!-- 현재는 일괄 삭제만 남겨두는 것이 좋습니다. -->
-    <button type="submit" name="action" value="delete" onclick="return confirm('선택한 게시글을 삭제하시겠습니까?');">선택 삭제</button>
-  </div>
-</form>
 
+  <div class="submit-btn-class">
+	  <button type="submit"
+	          name="action" value="delete"
+	          onclick="return confirm('선택한 게시글을 삭제하시겠습니까?');">
+	    선택 삭제
+	  </button>
+	</div>
+</form>
 
 <!-- 페이징 -->
 <div class="pagination">
-	<c:set var="startPage" value="${result.currentPage - (result.currentPage - 1) % 5}" />
-	<c:set var="endPage" value="${startPage + 4}" />
-	<c:set var="totalPage" value="${(result.totalCount + result.pageSize - 1) / result.pageSize}" />
+  <c:set var="startPage" value="${result.currentPage - (result.currentPage - 1) % 5}" />
+  <c:set var="endPage" value="${startPage + 4}" />
+  <c:set var="totalPage" value="${(result.totalCount + result.pageSize - 1) / result.pageSize}" />
 
-	<c:if test="${startPage > 1}">
-		<a href="${currentUri}?page=${startPage - 1}&searchKeyword=${searchKeyword}&searchType=${searchType}">&laquo;</a>
-	</c:if>
+  <c:if test="${startPage > 1}">
+    <a href="${currentUri}?page=${startPage - 1}&searchKeyword=${searchKeyword}&searchType=${searchType}">&laquo;</a>
+  </c:if>
 
-	<c:forEach var="p" begin="${startPage}" end="${endPage}">
-		<c:if test="${p <= totalPage}">
-			<a href="${currentUri}?page=${p}&searchKeyword=${searchKeyword}&searchType=${searchType}" class="${p == result.currentPage ? 'active-page' : ''}">${p}</a>
-		</c:if>
-	</c:forEach>
+  <c:forEach var="p" begin="${startPage}" end="${endPage}">
+    <c:if test="${p <= totalPage}">
+      <a href="${currentUri}?page=${p}&searchKeyword=${searchKeyword}&searchType=${searchType}" class="${p == result.currentPage ? 'active-page' : ''}">${p}</a>
+    </c:if>
+  </c:forEach>
 
-	<c:if test="${endPage < totalPage}">
-		<a href="${currentUri}?page=${endPage + 1}&searchKeyword=${searchKeyword}&searchType=${searchType}">&raquo;</a>
-	</c:if>
+  <c:if test="${endPage < totalPage}">
+    <a href="${currentUri}?page=${endPage + 1}&searchKeyword=${searchKeyword}&searchType=${searchType}">&raquo;</a>
+  </c:if>
 </div>
 
 <script>
-	function toggleAll(source) {
-	    const checkboxes = document.querySelectorAll('input[name="selectedIds"]');
-	    for (const checkbox of checkboxes) {
-	        checkbox.checked = source.checked;
-	    }
-	}
+function toggleAll(source){
+  const checkboxes=document.querySelectorAll('input[name="selectedIds"]');
+  for(const checkbox of checkboxes){ checkbox.checked=source.checked; }
+}
 </script>
 
 </body>
