@@ -7,7 +7,6 @@
 <link href="${contextPath}/resources/css/board.css" rel="stylesheet"
 	type="text/css">
 
-<!-- 글 작성 모달 -->
 <div id="postModal" style="display:none; position:fixed; top:0; left:0; 
     width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
     <div class="post-form-wrap">
@@ -25,8 +24,7 @@
 			</a>
 		</div>
 	</c:if>
-	<div class="board-list">		
-		<!-- 게시글 목록 영역 -->
+	<div class="board-list">	
 		<div id="ListContainer" class="list-wrap">
 		    <jsp:include page="items.jsp" />
 		</div>
@@ -39,17 +37,14 @@ $('article').has('.board').addClass('board-article');
 
 
 $(function() {
-    // 모달 열기
     $('#openPostModal').click(function() {
         $('#postModal').fadeIn();
     });
 
-    // 모달 닫기 버튼 클릭 시
     $('#closePostModal').click(function() {
         $('#postModal').fadeOut();
     });
 
-    // 모달 바깥 영역 클릭 시 닫기
     $('#postModal').click(function(e) {
         if (e.target === this) {
             $(this).fadeOut();

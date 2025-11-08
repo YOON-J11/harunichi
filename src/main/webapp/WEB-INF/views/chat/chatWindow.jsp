@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/> 
 <!DOCTYPE html>
 <html>
@@ -21,16 +22,23 @@
 			<div id="chatTop">
 				<div class="chat-top-left">
 					<c:choose>
-						<c:when test="${empty profileImg}">
-							<img class="profile-img" src="../resources/icon/basic_profile.jpg" alt="기본 프로필사진">												
-						</c:when>
-						<c:when test="${chatType eq 'personal'}">
-							<img class="profile-img" src="${profileImgPath}${profileImg}" alt="개인채팅방 프로필사진">
-						</c:when>
-						<c:otherwise>
-							<img class="profile-img" src="${contextPath}/images/chat/${profileImg}" alt="오픈채팅방 프로필사진">												
-						</c:otherwise>
-					</c:choose>						
+					  <c:when test="${chatType eq 'personal'}">
+					    <img class="profile-img"
+					         src="${contextPath}/images/profile/${profileImg}"
+					         alt="개인채팅 사용자 프로필"
+					         onerror="this.onerror=null;this.src='${contextPath}/resources/icon/basic_profile.jpg'">
+					  </c:when>
+					
+					  <c:otherwise>
+					    <img class="profile-img"
+					         src="${contextPath}/images/chat/${profileImg}"
+					         alt="오픈채팅방 이미지"
+					         onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2780%27 height=%2780%27 viewBox=%270 0 24 24%27%3E%3Crect width=%2724%27 height=%2724%27 rx=%274%27 fill=%27%23E2E8F0%27/%3E%3Cpath d=%27m0 22.013c.14-1.537.93-2.877 2.091-3.777.466-.361 1.146-.266 1.536.174l1.873 2.112 1.849-2.119c.387-.444 1.069-.544 1.537-.184 1.173.9 1.972 2.248 2.113 3.794.014 1.093-.878 1.987-1.984 1.987H1.984C.879 24-.014 23.106 0 22.013Zm13 0c-.014 1.093.878 1.987 1.984 1.987h7.032c1.106 0 1.998-.894 1.984-1.987-.141-1.547-.941-2.895-2.113-3.794-.469-.36-1.15-.26-1.537.184l-1.849 2.119-1.873-2.112c-.39-.44-1.07-.535-1.536-.174-1.16.9-1.951 2.24-2.091 3.777Zm9.5-10.013c0-2.206-1.794-4-4-4s-4 1.794-4 4 1.794 4 4 4 4-1.794 4-4Zm-6.5-8c0-2.206-1.794-4-4-4s-4 1.794-4 4 1.794 4 4 4 4-1.794 4-4Zm-6.5 8c0-2.206-1.794-4-4-4s-4 1.794-4 4 1.794 4 4 4 4-1.794 4-4Z%27 fill=%27%23718096%27/%3E%3C/svg%3E';"
+					         >
+					  </c:otherwise>
+					</c:choose>
+
+										
 					<div class="room-info">
 						<span class="room-title" id="receiverId">${title}<span class="user-count">(${count})</span></span>
 					</div>		
@@ -114,16 +122,26 @@
 	    <form action="${contextPath}/chat/updateOpenChat" id="updateChatForm" method="POST" enctype="multipart/form-data">
 		    <div class="chat-img-wrap">	
 				<c:choose>
-					<c:when test="${empty profileImg}">
-						<img class="chat-profile-img" src="../resources/icon/basic_profile.jpg" alt="기본 프로필사진">												
-					</c:when>
-					<c:when test="${chatType eq 'personal'}">
-						<img class="chat-profile-img" src="${profileImgPath}${profileImg}" alt="개인채팅방 프로필사진">
-					</c:when>
-					<c:otherwise>
-						<img id="openChatImg" class="chat-profile-img" src="${contextPath}/images/chat/${profileImg}" alt="오픈채팅방 프로필사진">												
-					</c:otherwise>
-				</c:choose>	
+				  <c:when test="${chatType eq 'personal'}">
+				    <img class="chat-profile-img"
+				         src="${contextPath}/images/profile/${profileImg}"
+				         alt="개인채팅 사용자 프로필"
+				         onerror="this.onerror=null;this.src='${contextPath}/resources/icon/basic_profile.jpg'">
+				  </c:when>
+				  <c:otherwise>
+				    <img id="openChatImg" class="chat-profile-img"
+				         src="${contextPath}/images/chat/${profileImg}"
+				         alt="오픈채팅방 이미지"
+				         onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724%27 height=%2724%27 viewBox=%270 0 24 24%27%3E%3Cpath d=%27m0 22.013c.14-1.537.93-2.877 2.091-3.777.466-.361 1.146-.266 1.536.174l1.873 2.112 1.849-2.119c.387-.444 1.069-.544 1.537-.184 1.173.9 1.972 2.248 2.113 3.794.014 1.093-.878 1.987-1.984 1.987H1.984C.879 24-.014 23.106 0 22.013Zm13 0c-.014 1.093.878 1.987 1.984 1.987h7.032c1.106 0 1.998-.894 1.984-1.987-.141-1.547-.941-2.895-2.113-3.794-.469-.36-1.15-.26-1.537.184l-1.849 2.119-1.873-2.112c-.39-.44-1.07-.535-1.536-.174-1.16.9-1.951 2.24-2.091 3.777Zm9.5-10.013c0-2.206-1.794-4-4-4s-4 1.794-4 4 1.794 4 4 4 4-1.794 4-4Zm-6.5-8c0-2.206-1.794-4-4-4s-4 1.794-4 4 1.794 4 4 4 4-1.794 4-4Zm-6.5 8c0-2.206-1.794-4-4-4s-4 1.794-4 4 1.794 4 4 4 4-1.794 4-4Z%27 fill=%27%23838BA0%27/%3E%3C/svg%3E';"
+				         >
+				  </c:otherwise>
+				</c:choose>
+								
+
+<!-- hidden 값은 기존 그대로 유지 -->
+<input type="hidden" id="openchatProfileImg" value="${contextPath}/images/chat/${profileImg}">
+<input type="hidden" id="originalImg" name="chatProfileImg" value="${profileImg}">
+	
 				<input type="hidden" id="openchatProfileImg" value="${contextPath}/images/chat/${profileImg}">							
 				<input type="hidden" id="originalImg" name="chatProfileImg" value="${profileImg}"><!-- 사진 변경 안 할 경우 -->
 				<c:if test="${sessionScope.member.id eq leader}">
@@ -149,8 +167,12 @@
 							<input type="radio" class="selected-user-id hidden" name="selectedUserId" data-user-nick = "${user.nick}" value="${user.id}">
 						</c:if>
 						<a href="${contextPath}/mypage?id=${user.id}">
-							<img class="user-profile-img" src="${profileImgPath}${user.profileImg}" alt="채팅 참여자 프로필 사진">
+						  <img class="user-profile-img"
+						       src="${contextPath}/images/profile/${user.profileImg}"
+						       alt="채팅 참여자 프로필"
+						       onerror="this.onerror=null;this.src='${contextPath}/resources/icon/basic_profile.jpg'">
 						</a>
+
 						<span>${user.nick}</span>
 				        <c:if test="${user.id eq leader}">
 				        	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">

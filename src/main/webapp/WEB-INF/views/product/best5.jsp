@@ -64,7 +64,7 @@
 </style>
 
 <div class="popular-box">
-    <h3>🔥 인기 상품 Top 5</h3>
+    <h3>인기 상품 Top 5</h3>
     <div class="popular-row">
 		<c:forEach var="item" items="${topProducts}">
 		  <div class="popular-card" onclick="location.href='${ctx}/product/view?productId=${item.productId}'">

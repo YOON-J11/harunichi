@@ -84,8 +84,11 @@ function renderProducts(products) {
 
 		// 프로필 이미지 처리
 		const profileImg = p.writerProfileImg
-		    ? ctx + '/images/profile/' + p.writerProfileImg
-		    : ctx + '/images/profile/default_profile.png';  // 외부 리소스 경로로 통일
+		    ? (p.writerProfileImg.startsWith('http')
+		        ? p.writerProfileImg
+		        : ctx + '/resources/profile/' + p.writerProfileImg)
+		    : ctx + '/resources/icon/basic_profile.jpg';
+
 
 		// 작성자 닉네임
 		const writerNick = p.writerNick;

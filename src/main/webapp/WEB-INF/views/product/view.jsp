@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
@@ -11,17 +12,29 @@
 	<h2 class="product-title">${product.productTitle}</h2>
 
 	<div class="writer-info">
-		<c:choose>
-			<c:when test="${not empty product.writerProfileImg}">
-				<img src="${ctx}/images/profile/${product.writerProfileImg}"
-					class="writer-img" alt="프로필" />
-			</c:when>
-			<c:otherwise>
-				<img src="${ctx}/images/profile/default_profile.png" class="writer-img" alt="기본 프로필" />
-			</c:otherwise>
-		</c:choose>
-		<span class="writer-nick">${product.writerNick}</span>
-	</div>
+		  <c:choose>
+		    <c:when test="${not empty product.writerProfileImg 
+		                   and fn:startsWith(product.writerProfileImg, 'http')}">
+		      <img src="${product.writerProfileImg}" 
+		           class="writer-img" alt="프로필" loading="lazy"
+		           onerror="this.src='${ctx}/resources/icon/basic_profile.jpg'"/>
+		    </c:when>
+		
+		    <c:when test="${not empty product.writerProfileImg}">
+		      <img src="${ctx}/resources/profile/${product.writerProfileImg}" 
+		           class="writer-img" alt="프로필" loading="lazy"
+		           onerror="this.src='${ctx}/resources/icon/basic_profile.jpg'"/>
+		    </c:when>
+		
+		    <c:otherwise>
+		      <img src="${ctx}/resources/icon/basic_profile.jpg" 
+		           class="writer-img" alt="기본 프로필" loading="lazy"/>
+		    </c:otherwise>
+		  </c:choose>
+		
+		  <span class="writer-nick">${product.writerNick}</span>
+		</div>
+
 
 	<div class="product-detail">
 		<c:choose>
