@@ -87,12 +87,20 @@
 									    </c:choose>
 									  </c:when>
 									  <c:otherwise>
-									    <img id="profileImg_${chatRoom.roomId}" src="${ctx}/resources/icon/basic_profile.jpg" alt="기본 프로필" />
+									    <c:choose>
+									      <c:when test="${chatRoom.chatType eq 'group'}">
+									        <img id="profileImg_${chatRoom.roomId}"
+									             src="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2780%27 height=%2780%27 viewBox=%270 0 24 24%27%3E%3Crect width=%2724%27 height=%2724%27 rx=%274%27 fill=%27%23E2E8F0%27/%3E%3Cpath d=%27m0 22.013c.14-1.537.93-2.877 2.091-3.777.466-.361 1.146-.266 1.536.174l1.873 2.112 1.849-2.119c.387-.444 1.069-.544 1.537-.184 1.173.9 1.972 2.248 2.113 3.794.014 1.093-.878 1.987-1.984 1.987H1.984C.879 24-.014 23.106 0 22.013Zm13 0c-.014 1.093.878 1.987 1.984 1.987h7.032c1.106 0 1.998-.894 1.984-1.987-.141-1.547-.941-2.895-2.113-3.794-.469-.36-1.15-.26-1.537.184l-1.849 2.119-1.873-2.112c-.39-.44-1.07-.535-1.536-.174-1.16.9-1.951 2.24-2.091 3.777Zm9.5-10.013c0-2.206-1.794-4-4-4s-4 1.794-4 4 1.794 4 4 4 4-1.794 4-4Zm-6.5-8c0-2.206-1.794-4-4-4s-4 1.794-4 4 1.794 4 4 4 4-1.794 4-4Zm-6.5 8c0-2.206-1.794-4-4-4s-4 1.794-4 4 1.794 4 4 4 4-1.794 4-4Z%27 fill=%27%23718096%27/%3E%3C/svg%3E"
+									             alt="오픈채팅 기본 이미지" />
+									      </c:when>
+									      <c:otherwise>
+									        <img id="profileImg_${chatRoom.roomId}" src="${ctx}/resources/icon/basic_profile.jpg" alt="기본 프로필" />
+									      </c:otherwise>
+									    </c:choose>
 									  </c:otherwise>
 									</c:choose>
-
 								</div>
-								<button type="button" onclick="resetProfileImg('${chatRoom.roomId}')">초기화</button>
+								<button type="button" onclick="resetProfileImg('${chatRoom.roomId}', '${chatRoom.chatType}')">초기화</button>
 								<input type="hidden" value="${chatRoom.profileImg}" name="imgReset_${loop.index}" id="profileImgInput_${chatRoom.roomId}" />
 							</div>
 						</td>
@@ -153,12 +161,19 @@
 		    }
 		}
 
-		function resetProfileImg(roomId) {
+		function resetProfileImg(roomId, chatType) {
 			const imgTag = document.getElementById("profileImg_" + roomId);
 		    const inputTag = document.getElementById("profileImgInput_" + roomId);
-		
-		    imgTag.src = "${contextPath}/resources/icon/basic_profile.jpg";
-		
+
+		    const OPEN_CHAT_DEFAULT_SVG =
+		      "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2780%27 height=%2780%27 viewBox=%270 0 24 24%27%3E%3Crect width=%2724%27 height=%2724%27 rx=%274%27 fill=%27%23E2E8F0%27/%3E%3Cpath d=%27m0 22.013c.14-1.537.93-2.877 2.091-3.777.466-.361 1.146-.266 1.536.174l1.873 2.112 1.849-2.119c.387-.444 1.069-.544 1.537-.184 1.173.9 1.972 2.248 2.113 3.794.014 1.093-.878 1.987-1.984 1.987H1.984C.879 24-.014 23.106 0 22.013Zm13 0c-.014 1.093.878 1.987 1.984 1.987h7.032c1.106 0 1.998-.894 1.984-1.987-.141-1.547-.941-2.895-2.113-3.794-.469-.36-1.15-.26-1.537.184l-1.849 2.119-1.873-2.112c-.39-.44-1.07-.535-1.536-.174-1.16.9-1.951 2.24-2.091 3.777Zm9.5-10.013c0-2.206-1.794-4-4-4s-4 1.794-4 4 1.794 4 4 4 4-1.794 4-4Zm-6.5-8c0-2.206-1.794-4-4-4s-4 1.794-4 4 1.794 4 4 4 4-1.794 4-4Zm-6.5 8c0-2.206-1.794-4-4-4s-4 1.794-4 4 1.794 4 4 4 4-1.794 4-4Z%27 fill=%27%23718096%27/%3E%3C/svg%3E";
+
+		    if (chatType === 'group') {
+		      imgTag.src = OPEN_CHAT_DEFAULT_SVG;
+		    } else {
+		      imgTag.src = contextPath + "/resources/icon/basic_profile.jpg";
+		    }
+
 		    inputTag.value = "";
 		}
 		
@@ -177,7 +192,6 @@
 			  selected.forEach((checkbox) => {
 			    const index = checkbox.value;
 
-			    // 선택된 roomId, title, imgReset 값 복사
 			    ['roomId', 'title', 'imgReset'].forEach((key) => {
 			      const original = document.querySelector("input[name=" + key + "_" + index + "]");
 			      if (original) {

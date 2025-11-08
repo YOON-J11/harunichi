@@ -259,6 +259,13 @@
 	const visibleCards = 4;
 	const totalCards = items.length;
 	const maxIndex = totalCards - visibleCards;
+	const joinedOpenRooms = new Set([
+		  <c:forEach var="mc" items="${myChatList}">
+		    <c:if test="${mc.chatType eq 'group'}">
+		      '${mc.roomId}',
+		    </c:if>
+		  </c:forEach>
+		  ]);
 
 	document.querySelector(".btn.next").addEventListener("click", (e) => {
 	  e.preventDefault();
@@ -355,17 +362,28 @@
 	}
 
 	function doOpenChat(event){
-		const roomId = event.getAttribute("data-room-id");
-		const personsEl = event.querySelector("span[data-persons]");
-		const countEl = event.querySelector("span[data-user-count]");
-		const persons = parseInt(personsEl.getAttribute("data-persons"), 10);
-		const count = parseInt(countEl.getAttribute("data-user-count"), 10);
-		if(persons <= count){
-			alert("이 채팅방은 이미 인원이 다 찼어요.");
-			return;
+		  const roomId = event.getAttribute("data-room-id");
+
+		  // 이미 내가 속한 방이면 정원 관계없이 바로 입장
+		  if (joinedOpenRooms.has(roomId)) {
+		    location.href = "${ctx}/chat/doOpenChat?roomId=" + roomId;
+		    return;
+		  }
+
+		  // 내가 속한 방이 아니면 정원 체크
+		  const personsEl = event.querySelector("span[data-persons]");
+		  const countEl = event.querySelector("span[data-user-count]");
+		  const persons = personsEl ? parseInt(personsEl.getAttribute("data-persons"), 10) : NaN;
+		  const count = countEl ? parseInt(countEl.getAttribute("data-user-count"), 10) : NaN;
+
+		  if (!isNaN(persons) && !isNaN(count) && persons <= count){
+		    alert("이 채팅방은 이미 인원이 다 찼어요.");
+		    return;
+		  }
+
+		  location.href = "${ctx}/chat/doOpenChat?roomId=" + roomId;
 		}
-		location.href = "${ctx}/chat/doOpenChat?roomId=" + roomId;
-	}
+
 
 	function uploadImg(input) {
 	    const file = input.files[0];
