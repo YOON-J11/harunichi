@@ -53,7 +53,7 @@ public interface ChatService {
 	//오픈 채팅 참여
 	void doOpenChat(ChatRoomVo chatRoomVo);
 
-	//채팅방 프로필 이미지 C드라이브에 저장
+	// 채팅방 프로필 이미지를 Azure Blob에 업로드하고 절대 URL을 반환
 	String chatProfileImgUpload(MultipartFile file);
 
 	//채팅방 정보에 상품ID 업데이트

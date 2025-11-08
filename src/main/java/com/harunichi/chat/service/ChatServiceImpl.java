@@ -1,6 +1,7 @@
 package com.harunichi.chat.service;
 
 import java.sql.Timestamp;
+
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ import com.harunichi.chat.vo.ChatVo;
 import com.harunichi.common.util.FileUploadUtil;
 import com.harunichi.member.vo.MemberVo;
 import lombok.extern.slf4j.Slf4j;
+import com.harunichi.common.storage.AzureBlobStorageService;
 
 @Slf4j
 @Service
@@ -28,6 +30,8 @@ public class ChatServiceImpl implements ChatService {
 
 	@Autowired
 	private ChatDao chatDao;
+	@Autowired
+	private AzureBlobStorageService blobStorage;
 	
 	//채팅 메세지 DB에 저장
 	@Override
@@ -120,22 +124,21 @@ public class ChatServiceImpl implements ChatService {
 		return newRoomId;
 	}
 	
-	//채팅방 프로필 이미지 C드라이브에 저장
+	//채팅방 프로필 이미지 저장
 	@Override
 	public String chatProfileImgUpload(MultipartFile file) {
-		log.info("---ChatService의 chatProfileImgUpload메소드 호출");
-		
-		String imgPath = "C:\\harunichi\\images\\chat";
-		String fileName = "";
-		
-		try {
-			fileName = FileUploadUtil.uploadFile(file, imgPath);			
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("⚠ 프로필 이미지 저장 실패");
-		}		
-		return fileName;		
+	    log.info("---ChatService의 chatProfileImgUpload (Azure Blob 업로드) 호출");
+	    if (file == null || file.isEmpty()) return null;
+
+	    try {
+	        AzureBlobStorageService.UploadResult r = blobStorage.upload("chat", file);
+	        return r.url;
+	    } catch (Exception e) {
+	        log.error("⚠ 프로필 이미지 Blob 업로드 실패", e);
+	        return null;
+	    }
 	}
+
 	
 	//과거 채팅 내역 불러오기
 	@Override

@@ -1,6 +1,7 @@
 package com.harunichi.chat.controller;
 
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.harunichi.chat.service.ChatService;
 import com.harunichi.chat.vo.ChatRoomVo;
 import com.harunichi.chat.vo.ChatVo;
+import com.harunichi.common.storage.AzureBlobStorageService;
 import com.harunichi.common.util.LoginCheck;
 import com.harunichi.member.service.MemberService;
 import com.harunichi.member.vo.MemberVo;
@@ -148,59 +150,50 @@ public class ChatControllerImpl implements ChatController {
 	//오픈 채팅방 생성
 	@Override
 	@RequestMapping(value = "createOpenChat", method = RequestMethod.POST)
-	public String createOpenChat(HttpServletRequest request, HttpServletResponse response, 
-			   				   Model model, HttpSession session,
-			   				   @RequestParam("imgUpload") MultipartFile file) throws Exception{	
-		log.info("chatController의 createOpenChat 메소드 실행 -------------");
-			
-		//로그인 유무 확인
-		if (!LoginCheck.loginCheck(session, request, response)) { return null; }
-		
-		String fileName = "";
-		
-		//이미지 파일이 있다면?
-		if(file != null && !file.isEmpty()) {
-			//이미지 파일을 C드라이브에 저장
-			fileName = chatService.chatProfileImgUpload(file);
-		}
-		
-		MemberVo member = (MemberVo) session.getAttribute("member");
-		String senderId = member.getId();
-		String nickname = member.getNick();
-		model.addAttribute("nickname", nickname);
-		
-		int	persons = Integer.parseInt(request.getParameter("persons"));
-		
-		ChatRoomVo vo = new ChatRoomVo();
-		vo.setUserId(senderId);
-		vo.setPersons(persons);
-		vo.setProfileImg(fileName);
-		vo.setTitle(request.getParameter("title"));
-		vo.setChatType(request.getParameter("chatType"));
-		
-		//채팅방 ID 생성 후 DB에 채팅방 정보 저장
-		String roomId = chatService.insertRoomId(vo);
-		model.addAttribute("roomId", roomId);
-		model.addAttribute("profileImg", vo.getProfileImg());
+	public String createOpenChat(HttpServletRequest request, HttpServletResponse response,
+	                             Model model, HttpSession session,
+	                             @RequestParam("imgUpload") MultipartFile file) throws Exception {
 
-		//채팅방 참여 인원수 조회
-		int count = chatService.selectUserCount(roomId);		
-		model.addAttribute("count", count);
-		model.addAttribute("title", vo.getTitle());
-		
-		//채팅방에 참여하고 있는 유저 ID 조회
-		List<String> userIdList = chatService.selectUserByRoomId(roomId);
-		List<MemberVo> userList = new ArrayList<MemberVo>();
-		
-		for(String user : userIdList) {
-			//유저 ID로 프로필 정보 조회
-			MemberVo memberVo = memberService.selectMemberById(user);
-			userList.add(memberVo);
-		}
-		model.addAttribute("userList", userList);
-						
-		return "/chatWindow";		
+	    if (!LoginCheck.loginCheck(session, request, response)) { return null; }
+
+	    MemberVo member = (MemberVo) session.getAttribute("member");
+	    String senderId = member.getId();
+	    model.addAttribute("nickname", member.getNick());
+
+	    int persons = Integer.parseInt(request.getParameter("persons"));
+
+	    ChatRoomVo vo = new ChatRoomVo();
+	    vo.setUserId(senderId);
+	    vo.setPersons(persons);
+	    vo.setTitle(request.getParameter("title"));
+	    vo.setChatType(request.getParameter("chatType"));
+
+	    if (file != null && !file.isEmpty()) {
+	        String url = chatService.chatProfileImgUpload(file); // 절대 URL 반환
+	        vo.setProfileImg(url);
+	    } else {
+	        vo.setProfileImg(null);
+	    }
+
+	    String roomId = chatService.insertRoomId(vo);
+	    model.addAttribute("roomId", roomId);
+
+	    int count = chatService.selectUserCount(roomId);
+	    model.addAttribute("count", count);
+	    model.addAttribute("title", vo.getTitle());
+	    model.addAttribute("profileImg", vo.getProfileImg());
+
+	    List<String> userIdList = chatService.selectUserByRoomId(roomId);
+	    List<MemberVo> userList = new ArrayList<>();
+	    for (String user : userIdList) {
+	        userList.add(memberService.selectMemberById(user));
+	    }
+	    model.addAttribute("userList", userList);
+
+	    return "/chatWindow";
 	}
+
+
 	
 	
 	//개인 채팅방 생성
@@ -480,38 +473,32 @@ public class ChatControllerImpl implements ChatController {
 	//오픈 채팅방 정보 수정
 	@Override
 	@RequestMapping(value = "updateOpenChat", method = RequestMethod.POST)
-	public String updateOpenChat(HttpServletRequest request, HttpServletResponse response, 
-			 					 Model model, HttpSession session,
-			   				   	 @RequestParam("imgUpload") MultipartFile file) throws Exception{	
-		log.info("chatController의 updateOpenChat 메소드 실행 -------------");
-			
-		//로그인 유무 확인
-		if (!LoginCheck.loginCheck(session, request, response)) { return null; }
-		
-		String fileName = "";
-		ChatRoomVo vo = new ChatRoomVo();	
-		
-		//이미지 파일이 있다면?
-		if(file != null && !file.isEmpty()) {
-			//이미지 파일을 C드라이브에 저장
-			fileName = chatService.chatProfileImgUpload(file);
-			vo.setProfileImg(fileName);
-		}else {
-			vo.setProfileImg(request.getParameter("chatProfileImg"));
-		}
-		
-		int	persons = Integer.parseInt(request.getParameter("persons"));
-			
-		vo.setPersons(persons);		
-		vo.setRoomId(request.getParameter("roomId"));
-		vo.setTitle(request.getParameter("title"));
-		vo.setChatType(request.getParameter("chatType"));
-		
-		//채팅방 정보 업데이트
-		chatService.updateChatRoom(vo);
-						
-		return "redirect:/chat/doChat?roomId=" + vo.getRoomId() + "&chatType=" + vo.getChatType();	
+	public String updateOpenChat(HttpServletRequest request, HttpServletResponse response,
+	                             Model model, HttpSession session,
+	                             @RequestParam("imgUpload") MultipartFile file) throws Exception {
+
+	    if (!LoginCheck.loginCheck(session, request, response)) { return null; }
+
+	    ChatRoomVo vo = new ChatRoomVo();
+	    vo.setRoomId(request.getParameter("roomId"));
+	    vo.setTitle(request.getParameter("title"));
+	    vo.setChatType(request.getParameter("chatType"));
+	    vo.setPersons(Integer.parseInt(request.getParameter("persons")));
+
+	    String keep = request.getParameter("chatProfileImg");
+
+	    if (file != null && !file.isEmpty()) {
+	        String newUrl = chatService.chatProfileImgUpload(file);
+	        vo.setProfileImg(newUrl);
+	    } else {
+	        vo.setProfileImg(keep);
+	    }
+
+	    chatService.updateChatRoom(vo);
+
+	    return "redirect:/chat/doChat?roomId=" + vo.getRoomId() + "&chatType=" + vo.getChatType();
 	}
+
 	
 
 	//오픈 채팅방 방장 위임
